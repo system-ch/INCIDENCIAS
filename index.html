@@ -149,7 +149,7 @@ dialog::backdrop{background:rgba(5,20,22,.6)}
 <div><label for="fe">Estado</label><select id="fe"><option value="">Todos</option><option>Pendiente</option><option>En proceso</option><option>Cerrada</option></select></div>
 <div><label for="fp">Prioridad</label><select id="fp"><option value="">Todas</option><option>Alta</option><option>Media</option><option>Baja</option></select></div>
 </div></div>
-<div class="card"><div class="tw"><table><thead><tr><th>N.º</th><th>Fecha</th><th>Tipo</th><th>Área</th><th>Prioridad</th><th>Estado</th></tr></thead><tbody id="tb"></tbody></table></div><div class="empty" id="emp" hidden>Aún no hay incidencias. Registre la primera en «Nueva incidencia».</div></div>
+<div class="card"><div class="tw"><table><thead><tr><th>N.º</th><th>Fecha</th><th>Tipo</th><th>Área</th><th>Prioridad</th><th>Estado</th><th></th></tr></thead><tbody id="tb"></tbody></table></div><div class="empty" id="emp" hidden>Aún no hay incidencias. Registre la primera en «Nueva incidencia».</div></div>
 </section>
 
 <section id="dash" hidden>
@@ -247,9 +247,10 @@ const tipoLbl=i=>i.tipo==="Otro"&&i.otro?"Otro: "+i.otro:i.tipo;
 function renderHist(){
   const q=$("#q").value.toLowerCase(),fe=$("#fe").value,fp=$("#fp").value;
   const L=DB.items.filter(i=>(!fe||i.est===fe)&&(!fp||i.prio===fp)&&(!q||(pad(i.n)+" "+(i.cargo||"")+" "+i.hc+" "+i.area+" "+i.desc+" "+i.rep+" "+tipoLbl(i)).toLowerCase().includes(q)));
-  $("#tb").innerHTML=L.map(i=>`<tr class="rw" data-n="${i.n}"><td><b>${pad(i.n)}</b></td><td>${fmt(i.fecha)}<br><small>${i.hora||""}</small></td><td>${esc(tipoLbl(i))}</td><td>${esc(i.area)||"—"}</td><td><span class="tag t-${i.prio}">${i.prio}</span></td><td><span class="tag t-${tagCls(i.est)}">${i.est}</span></td></tr>`).join("");
+  $("#tb").innerHTML=L.map(i=>`<tr class="rw" data-n="${i.n}"><td><b>${pad(i.n)}</b></td><td>${fmt(i.fecha)}<br><small>${i.hora||""}</small></td><td>${esc(tipoLbl(i))}</td><td>${esc(i.area)||"—"}</td><td><span class="tag t-${i.prio}">${i.prio}</span></td><td><span class="tag t-${tagCls(i.est)}">${i.est}</span></td><td><button class="btn dng sm" data-del="${i.n}">Eliminar</button></td></tr>`).join("");
   $("#emp").hidden=L.length>0;
   $$("#tb tr").forEach(r=>r.onclick=()=>openDlg(+r.dataset.n));
+  $$("#tb [data-del]").forEach(b=>b.onclick=e=>{e.stopPropagation();if(!b.dataset.s){b.dataset.s=1;b.textContent="¿Seguro?";setTimeout(()=>{if(b.isConnected){delete b.dataset.s;b.textContent="Eliminar"}},3000);return}const n=+b.dataset.del;DB.items=DB.items.filter(x=>x.n!==n);persist();if(CLOUD)CLOUD.del(n).catch(cloudErr);renderHist();toast("Incidencia eliminada")});
 }
 ["q","fe","fp"].forEach(i=>$("#"+i).oninput=renderHist);
 function openDlg(n){
