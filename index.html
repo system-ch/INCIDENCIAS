@@ -177,7 +177,7 @@ function setStatus(t,ok){const s=document.getElementById("cst");if(s){s.textCont
 function cloudErr(e){console.error(e);setStatus("Solo en este equipo",false);toast("Sin conexión a la nube: "+((e&&(e.code||e.message))||e))}
 function syncPut(i){if(CLOUD)CLOUD.put(i).catch(cloudErr)}
 function fixCounter(){DB.counter=DB.items.reduce((m,i)=>Math.max(m,i.n),0);persist();if(CLOUD)CLOUD.setc(DB.counter).catch(cloudErr);$("#nextNum").textContent=pad(DB.counter+1)}
-window.attachCloud=async c=>{try{const r=await c.all();CLOUD=c;const map=new Map();DB.items.forEach(i=>map.set(i.n,i));r.items.forEach(i=>map.set(i.n,i));
+window.attachCloud=async c=>{try{const r=await c.all();CLOUD=c;const map=new Map();DB.items.forEach(i=>map.set(i.n,i));r.items.filter(i=>i.tipo).forEach(i=>map.set(i.n,i));
  if(!window.upDone){window.upDone=1;DB.items.filter(i=>!r.ids.has(i.n)).forEach(i=>c.put(i).catch(cloudErr))}
  DB.items=[...map.values()].sort((a,b)=>b.n-a.n);DB.counter=Math.max(0,...DB.items.map(i=>i.n));if(r.counter!==DB.counter)c.setc(DB.counter).catch(cloudErr);persist();
  if(!$("#hist").hidden)renderHist();if(!$("#dash").hidden)renderDash();$("#nextNum").textContent=pad(DB.counter+1);setStatus("Conectado a la nube",true)}catch(e){cloudErr(e)}};
@@ -317,7 +317,8 @@ try{
  const C={
   async all(){const s=await getDocs(col);const items=[];s.forEach(d=>items.push(d.data()));const m=await getDoc(mc);
    return{items,ids:new Set(items.map(i=>i.n)),counter:m.exists()?(m.data().valor||0):0}},
-  next(min){return runTransaction(db,async t=>{const s=await t.get(mc);const v=Math.max(s.exists()?s.data().valor:0,min||0)+1;t.set(mc,{valor:v});return v})},
+  async next(){const s=await getDocs(col);let n=0;s.forEach(d=>{n=Math.max(n,d.data().n||0)});n++;
+   for(;;){const ok=await runTransaction(db,async t=>{const r=doc(db,"incidencias",String(n));const g=await t.get(r);if(g.exists())return false;t.set(r,{n,reservado:true});return true});if(ok)return n;n++}},
   put(i){return setDoc(doc(db,"incidencias",String(i.n)),i)},
   del(n){return deleteDoc(doc(db,"incidencias",String(n)))},
   setc(v){return setDoc(mc,{valor:v})}
