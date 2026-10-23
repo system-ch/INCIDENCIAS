@@ -75,6 +75,8 @@ dialog::backdrop{background:rgba(5,20,22,.6)}
 .sigimg{max-height:80px;background:#fdfdf8;border:1px solid var(--line);border-radius:8px;padding:4px}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--pri);color:#fff;padding:12px 22px;border-radius:99px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.3);z-index:20}
 [hidden]{display:none!important}
+.cst{margin-top:auto;display:block;text-align:center;padding:4px 8px;border-radius:99px;font-size:11px;font-weight:700;background:#c2410c;color:#fff}
+@media (max-width:720px){.cst{font-size:0;width:10px;height:10px;padding:0;align-self:center}}
 @media (max-width:520px){.bar{grid-template-columns:100px 1fr 26px}.kv{grid-template-columns:1fr}}
 @media (max-width:720px){.side{width:64px;padding:14px 8px}.side nav button span,.brand span{display:none}.side nav button{justify-content:center;padding:12px 0}.brand{justify-content:center;padding-bottom:14px}}
 @media print{header,.side,.noprint{display:none!important}}
@@ -89,12 +91,9 @@ dialog::backdrop{background:rgba(5,20,22,.6)}
 <button data-t="hist" title="Historial"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>Historial</span></button>
 <button data-t="dash" title="Dashboard"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Dashboard</span></button>
 </nav>
+<span id="cst" class="cst">Solo en este equipo</span>
 </aside>
 <div class="content">
-<header><div class="hw">
-<h1>Registro de incidencias</h1>
-<p>Servicio de terapia física y rehabilitación · registro, seguimiento y cierre</p>
-</div></header>
 <main>
 
 <section id="form">
@@ -104,6 +103,7 @@ dialog::backdrop{background:rgba(5,20,22,.6)}
 <div><label for="fecha">Fecha del reporte</label><input type="date" id="fecha"></div>
 <div><label for="hora">Hora</label><input type="time" id="hora"></div>
 <div><label for="turno">Turno</label><select id="turno"><option>Mañana</option><option>Tarde</option><option>Noche</option></select></div>
+<div><label for="cargo">Personal a cargo</label><input id="cargo" placeholder="Escriba el nombre"></div>
 </div></div>
 
 <div class="card"><h2>II. Tipo de incidencia</h2>
@@ -172,6 +172,14 @@ dialog::backdrop{background:rgba(5,20,22,.6)}
 <script>
 const TIPOS=["Incidente durante la atención del paciente","Caída o riesgo de caída","Dolor o reacción inesperada","Falla de equipo de rehabilitación","Problema con citas o programación","Ausencia o retraso del personal","Falta de materiales o insumos","Otro"];
 const KEY="terapia_incidencias_v1";
+let CLOUD=null;
+function setStatus(t,ok){const s=document.getElementById("cst");if(s){s.textContent=t;s.style.background=ok?"#15803d":"#c2410c"}}
+function cloudErr(e){console.error(e);setStatus("Solo en este equipo",false);toast("Sin conexión a la nube: "+((e&&(e.code||e.message))||e))}
+function syncPut(i){if(CLOUD)CLOUD.put(i).catch(cloudErr)}
+window.attachCloud=async c=>{try{const r=await c.all();CLOUD=c;const map=new Map();DB.items.forEach(i=>map.set(i.n,i));r.items.forEach(i=>map.set(i.n,i));
+ if(!window.upDone){window.upDone=1;DB.items.filter(i=>!r.ids.has(i.n)).forEach(i=>c.put(i).catch(cloudErr))}
+ DB.items=[...map.values()].sort((a,b)=>b.n-a.n);DB.counter=Math.max(DB.counter,r.counter,0,...DB.items.map(i=>i.n));persist();
+ if(!$("#hist").hidden)renderHist();if(!$("#dash").hidden)renderDash();$("#nextNum").textContent=pad(DB.counter+1);setStatus("Conectado a la nube",true)}catch(e){cloudErr(e)}};
 let DB={counter:0,items:[]};
 try{const r=localStorage.getItem(KEY);if(r)DB=JSON.parse(r)}catch(e){}
 function persist(){try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){}}
@@ -183,7 +191,7 @@ const tagCls=e=>e==="En proceso"?"En":e;
 const today=()=>{const d=new Date();return new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
 
 /* Tabs */
-$$("#nav button").forEach(b=>b.onclick=()=>{$$("#nav button").forEach(x=>x.classList.toggle("on",x===b));["form","hist","dash"].forEach(id=>$("#"+id).hidden=id!==b.dataset.t);if(b.dataset.t==="hist")renderHist();if(b.dataset.t==="dash")renderDash();if(location.hash!=="#"+b.dataset.t)try{}catch(e){}});
+$$("#nav button").forEach(b=>b.onclick=()=>{$$("#nav button").forEach(x=>x.classList.toggle("on",x===b));["form","hist","dash"].forEach(id=>$("#"+id).hidden=id!==b.dataset.t);if(b.dataset.t!=="form"&&CLOUD)window.attachCloud(CLOUD);if(b.dataset.t==="hist")renderHist();if(b.dataset.t==="dash")renderDash();if(location.hash!=="#"+b.dataset.t)try{}catch(e){}});
 
 /* Tipos */
 $("#tipos").innerHTML=TIPOS.map((t,i)=>`<label><input type="radio" name="tipo" value="${t}"><span>${t}</span></label>`).join("");
@@ -209,7 +217,7 @@ $$("[data-clr]").forEach(b=>b.onclick=()=>sigs["sig"+b.dataset.clr].clear());
 /* Formulario */
 function turnoAuto(){const h=new Date().getHours();return h>=6&&h<14?"Mañana":h>=14&&h<20?"Tarde":"Noche"}
 function resetForm(){
-  ["hc","area","rep","desc","acc","med","resp","cierre","otroTxt"].forEach(i=>$("#"+i).value="");
+  ["cargo","hc","area","rep","desc","acc","med","resp","cierre","otroTxt"].forEach(i=>$("#"+i).value="");
   $("#fecha").value=today();$("#hora").value=new Date().toTimeString().slice(0,5);$("#turno").value=turnoAuto();
   $("#prio").value="Media";$("#est").value="Pendiente";$$("input[name=tipo]").forEach(r=>r.checked=false);$("#otroTxt").hidden=true;
   $$("input[name=com]")[0].checked=true;sigs.sig1.clear();sigs.sig2.clear();$("#err").textContent="";
@@ -217,27 +225,28 @@ function resetForm(){
 }
 $("#reset").onclick=resetForm;
 function toast(m){const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>t.hidden=true,3200)}
-$("#save").onclick=()=>{
+$("#save").onclick=async()=>{
   const tipo=($$("input[name=tipo]:checked")[0]||{}).value;const err=$("#err");
   if(!tipo)return err.textContent="Seleccione el tipo de incidencia.";
   if(tipo==="Otro"&&!$("#otroTxt").value.trim())return err.textContent="Especifique el otro tipo.";
   if(!$("#desc").value.trim())return err.textContent="Describa qué ocurrió.";
   if(!$("#rep").value.trim())return err.textContent="Indique el personal que reporta.";
   if(!sigs.sig1.has())return err.textContent="Falta la firma del trabajador que reporta.";
-  DB.counter+=1;
-  const it={n:DB.counter,fecha:$("#fecha").value,hora:$("#hora").value,turno:$("#turno").value,tipo,otro:$("#otroTxt").value.trim(),
+  let num=DB.counter+1;if(CLOUD){try{num=await CLOUD.next(DB.counter)}catch(e){cloudErr(e)}}
+  DB.counter=Math.max(DB.counter,num);
+  const it={n:num,cargo:$("#cargo").value.trim(),fecha:$("#fecha").value,hora:$("#hora").value,turno:$("#turno").value,tipo,otro:$("#otroTxt").value.trim(),
     hc:$("#hc").value.trim(),area:$("#area").value.trim(),rep:$("#rep").value.trim(),desc:$("#desc").value.trim(),acc:$("#acc").value.trim(),
     com:$$("input[name=com]:checked")[0].value,prio:$("#prio").value,est:$("#est").value,med:$("#med").value.trim(),resp:$("#resp").value.trim(),
     cierre:$("#cierre").value,firma1:sigs.sig1.data(),firma2:sigs.sig2.has()?sigs.sig2.data():""};
   if(it.est==="Cerrada"&&!it.cierre)it.cierre=today();
-  DB.items.unshift(it);persist();toast("Incidencia N.º "+pad(it.n)+" guardada");resetForm();
+  DB.items.unshift(it);persist();let ok=!CLOUD;if(CLOUD){try{await CLOUD.put(it);ok=true}catch(e){cloudErr(e)}}toast("Incidencia N.º "+pad(it.n)+(ok?" guardada":" guardada solo en este equipo"));resetForm();
 };
 
 /* Historial */
 const tipoLbl=i=>i.tipo==="Otro"&&i.otro?"Otro: "+i.otro:i.tipo;
 function renderHist(){
   const q=$("#q").value.toLowerCase(),fe=$("#fe").value,fp=$("#fp").value;
-  const L=DB.items.filter(i=>(!fe||i.est===fe)&&(!fp||i.prio===fp)&&(!q||(pad(i.n)+" "+i.hc+" "+i.area+" "+i.desc+" "+i.rep+" "+tipoLbl(i)).toLowerCase().includes(q)));
+  const L=DB.items.filter(i=>(!fe||i.est===fe)&&(!fp||i.prio===fp)&&(!q||(pad(i.n)+" "+(i.cargo||"")+" "+i.hc+" "+i.area+" "+i.desc+" "+i.rep+" "+tipoLbl(i)).toLowerCase().includes(q)));
   $("#tb").innerHTML=L.map(i=>`<tr class="rw" data-n="${i.n}"><td><b>${pad(i.n)}</b></td><td>${fmt(i.fecha)}<br><small>${i.hora||""}</small></td><td>${esc(tipoLbl(i))}</td><td>${esc(i.area)||"—"}</td><td><span class="tag t-${i.prio}">${i.prio}</span></td><td><span class="tag t-${tagCls(i.est)}">${i.est}</span></td></tr>`).join("");
   $("#emp").hidden=L.length>0;
   $$("#tb tr").forEach(r=>r.onclick=()=>openDlg(+r.dataset.n));
@@ -247,12 +256,12 @@ function openDlg(n){
   const i=DB.items.find(x=>x.n===n);if(!i)return;const d=$("#dlg");
   const kv=(k,v)=>`<dt>${k}</dt><dd>${esc(v)||"—"}</dd>`;
   d.innerHTML=`<div class="row" style="justify-content:space-between"><h2>Incidencia N.º ${pad(i.n)}</h2><span><span class="tag t-${i.prio}">${i.prio}</span> <span class="tag t-${tagCls(i.est)}">${i.est}</span></span></div>
-  <dl class="kv">${kv("Fecha y hora",fmt(i.fecha)+" · "+i.hora+" · Turno "+i.turno)}${kv("Tipo",tipoLbl(i))}${kv("Paciente (HC)",i.hc)}${kv("Área",i.area)}${kv("Reporta",i.rep)}${kv("Descripción",i.desc)}${kv("Acciones inmediatas",i.acc)}${kv("Se comunicó al responsable",i.com)}${kv("Medida correctiva",i.med)}${kv("Responsable seguimiento",i.resp)}${kv("Fecha de cierre",fmt(i.cierre))}</dl>
+  <dl class="kv">${kv("Fecha y hora",fmt(i.fecha)+" · "+i.hora+" · Turno "+i.turno)}${kv("Tipo",tipoLbl(i))}${kv("Personal a cargo",i.cargo)}${kv("Paciente (HC)",i.hc)}${kv("Área",i.area)}${kv("Reporta",i.rep)}${kv("Descripción",i.desc)}${kv("Acciones inmediatas",i.acc)}${kv("Se comunicó al responsable",i.com)}${kv("Medida correctiva",i.med)}${kv("Responsable seguimiento",i.resp)}${kv("Fecha de cierre",fmt(i.cierre))}</dl>
   <div class="two"><div><label>Firma del trabajador</label><img class="sigimg" src="${i.firma1}" alt="Firma del trabajador"></div><div><label>Firma del responsable</label>${i.firma2?`<img class="sigimg" src="${i.firma2}" alt="Firma del responsable">`:"<div class='empty' style='padding:10px'>Sin firma</div>"}</div></div>
   <div class="row" style="margin-top:16px;justify-content:space-between"><div class="row"><select id="chE" style="width:auto"><option>Pendiente</option><option>En proceso</option><option>Cerrada</option></select><button class="btn sm" id="chB">Actualizar estado</button></div><div class="row"><button class="btn sec sm" id="prB">Imprimir</button><button class="btn dng sm" id="delB">Eliminar</button><button class="btn sec sm" id="clB">Cerrar</button></div></div>`;
   $("#chE").value=i.est;
-  $("#chB").onclick=()=>{i.est=$("#chE").value;if(i.est==="Cerrada"&&!i.cierre)i.cierre=today();if(i.est!=="Cerrada")i.cierre="";persist();d.close();renderHist();toast("Estado actualizado")};
-  $("#delB").onclick=()=>{if($("#delB").dataset.s){DB.items=DB.items.filter(x=>x.n!==n);persist();d.close();renderHist();toast("Incidencia eliminada")}else{$("#delB").dataset.s=1;$("#delB").textContent="Confirmar eliminación"}};
+  $("#chB").onclick=()=>{i.est=$("#chE").value;if(i.est==="Cerrada"&&!i.cierre)i.cierre=today();if(i.est!=="Cerrada")i.cierre="";persist();syncPut(i);d.close();renderHist();toast("Estado actualizado")};
+  $("#delB").onclick=()=>{if($("#delB").dataset.s){DB.items=DB.items.filter(x=>x.n!==n);persist();if(CLOUD)CLOUD.del(n).catch(cloudErr);d.close();renderHist();toast("Incidencia eliminada")}else{$("#delB").dataset.s=1;$("#delB").textContent="Confirmar eliminación"}};
   $("#clB").onclick=()=>d.close();$("#prB").onclick=()=>{try{window.print()}catch(e){}};
   d.showModal();
 }
@@ -292,6 +301,25 @@ function renderDash(){
 }
 $("#per").onchange=renderDash;
 resetForm();
+</script>
+<script type="module">
+/* ===== Configuración de Firebase (de su consola: Configuración del proyecto > Apps web) ===== */
+const cfg={apiKey:"AIzaSyA4E3-MPSujDY_tZxCfImBNJrlDbYYeXgE",authDomain:"incidencias-53ce1.firebaseapp.com",projectId:"incidencias-53ce1",storageBucket:"incidencias-53ce1.firebasestorage.app",messagingSenderId:"116924147110",appId:"1:116924147110:web:3ee1940394160f1f1adb67"};
+/* ================================================================================================ */
+try{
+ const {initializeApp}=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
+ const {getFirestore,collection,doc,getDocs,getDoc,setDoc,deleteDoc,runTransaction}=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+ const db=getFirestore(initializeApp(cfg));
+ const col=collection(db,"incidencias"),mc=doc(db,"meta","contador");
+ const C={
+  async all(){const s=await getDocs(col);const items=[];s.forEach(d=>items.push(d.data()));const m=await getDoc(mc);
+   return{items,ids:new Set(items.map(i=>i.n)),counter:m.exists()?(m.data().valor||0):0}},
+  next(min){return runTransaction(db,async t=>{const s=await t.get(mc);const v=Math.max(s.exists()?s.data().valor:0,min||0)+1;t.set(mc,{valor:v});return v})},
+  put(i){return setDoc(doc(db,"incidencias",String(i.n)),i)},
+  del(n){return deleteDoc(doc(db,"incidencias",String(n)))}
+ };
+ await window.attachCloud(C);
+}catch(e){cloudErr(e)}
 </script>
 </body>
 </html>
