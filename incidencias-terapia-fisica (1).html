@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Registro de incidencias · Terapia física y rehabilitación</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#eef3f2;--card:#fff;--ink:#14282b;--mut:#5d7276;--line:#d5e0df;--pri:#0f766e;--pri2:#14b8a6;--priSoft:#d9f0ec;
+--red:#c2410c;--amb:#b7791f;--grn:#15803d;--blue:#1d3fa8;--shadow:0 1px 2px rgba(20,40,43,.06),0 8px 24px -12px rgba(20,40,43,.15)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1a1c;--card:#16272a;--ink:#e6f1f0;--mut:#93aaad;--line:#2a4145;--pri:#2dd4bf;--pri2:#14b8a6;--priSoft:#12413d;--red:#fb923c;--amb:#fbbf24;--grn:#4ade80;--blue:#9db4ff;--shadow:none}}
+:root[data-theme="dark"]{--bg:#0e1a1c;--card:#16272a;--ink:#e6f1f0;--mut:#93aaad;--line:#2a4145;--pri:#2dd4bf;--pri2:#14b8a6;--priSoft:#12413d;--red:#fb923c;--amb:#fbbf24;--grn:#4ade80;--blue:#9db4ff;--shadow:none}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif;margin:0;font-weight:700}
+header{background:linear-gradient(120deg,#0b4f4a,#0f766e);color:#fff;padding:22px 20px 18px}
+.hw{max-width:1100px;margin:0 auto}
+header h1{font-size:clamp(20px,3.5vw,28px)}header p{margin:2px 0 0;opacity:.8;font-size:13px}
+.app{display:flex;min-height:100vh}
+.side{width:230px;flex:none;background:linear-gradient(180deg,#0b4f4a,#0f766e);color:#fff;padding:20px 12px;position:sticky;top:0;align-self:flex-start;height:100vh;display:flex;flex-direction:column;gap:6px;z-index:5}
+.brand{display:flex;gap:10px;align-items:center;padding:4px 8px 18px;font:700 15px Georgia,serif;line-height:1.2}
+.brand svg{width:30px;height:30px;flex:none;stroke:#5eead4;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.side nav{display:flex;flex-direction:column;gap:6px}
+.side nav button{display:flex;align-items:center;gap:12px;background:transparent;color:#cfeeea;border:0;padding:12px 14px;font:600 14px "Segoe UI",system-ui,sans-serif;border-radius:12px;cursor:pointer;text-align:left}
+.side nav button svg{width:22px;height:22px;flex:none;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.side nav button:hover{background:rgba(255,255,255,.12)}
+.side nav button.on{background:#fff;color:#0f766e}
+.content{flex:1;min-width:0}
+main{max-width:1100px;margin:0 auto;padding:20px 16px 60px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
+.card h2{font-size:17px;margin-bottom:14px;color:var(--pri)}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+label{display:block;font-size:13px;font-weight:600;color:var(--mut);margin-bottom:4px}
+input,select,textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:9px 11px}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--pri2);outline-offset:1px}
+textarea{min-height:90px;resize:vertical}
+.num{font:700 26px Georgia,serif;color:var(--pri);background:var(--priSoft);border-radius:9px;padding:4px 12px;display:inline-block}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips label{margin:0;cursor:pointer}
+.chips input{position:absolute;opacity:0;width:0}
+.chips span{display:inline-block;padding:8px 13px;border:1px solid var(--line);border-radius:99px;font-weight:500;color:var(--ink);background:var(--bg);font-size:14px}
+.chips input:checked+span{background:var(--pri);color:#fff;border-color:var(--pri)}
+.chips input:focus-visible+span{outline:2px solid var(--pri2)}
+.sig{border:1.5px dashed var(--line);border-radius:12px;background:#fdfdf8;position:relative;touch-action:none}
+.sig canvas{width:100%;height:150px;display:block;cursor:crosshair}
+.sig small{position:absolute;left:12px;bottom:6px;color:#9aa;pointer-events:none;font-size:12px}
+.sig.done small{display:none}
+.btn{background:var(--pri);color:#fff;border:0;border-radius:10px;padding:11px 20px;font:600 15px inherit;font-family:inherit;cursor:pointer}
+.btn.sec{background:transparent;color:var(--pri);border:1px solid var(--pri)}
+.btn.sm{padding:6px 12px;font-size:13px}
+.btn.dng{background:transparent;color:var(--red);border:1px solid var(--red)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.kpis{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-bottom:16px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow);border-left:5px solid var(--c,var(--pri))}
+.kpi b{display:block;font:700 34px Georgia,serif;color:var(--c,var(--pri));line-height:1.1}
+.kpi span{color:var(--mut);font-size:13px}
+.two{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(310px,1fr))}
+.bar{display:grid;grid-template-columns:150px 1fr 30px;gap:8px;align-items:center;margin:7px 0;font-size:13px}
+.bar i{display:block;height:12px;border-radius:6px;background:linear-gradient(90deg,var(--pri),var(--pri2))}
+.bar div{background:var(--bg);border-radius:6px}
+.tag{display:inline-block;padding:2px 10px;border-radius:99px;font-size:12px;font-weight:700}
+.t-Alta{background:#fde4d6;color:#9a3412}.t-Media{background:#fdf0c8;color:#855a0b}.t-Baja{background:#dcf3e2;color:#166534}
+.t-Pendiente{background:#fde4d6;color:#9a3412}.t-En{background:#dbe5ff;color:#1d3fa8}.t-Cerrada{background:#dcf3e2;color:#166534}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--mut);font-size:13px}
+tr.rw{cursor:pointer}tr.rw:hover{background:var(--priSoft)}
+.empty{text-align:center;color:var(--mut);padding:34px 10px}
+dialog{border:0;border-radius:16px;max-width:680px;width:calc(100% - 24px);background:var(--card);color:var(--ink);padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+dialog::backdrop{background:rgba(5,20,22,.6)}
+.kv{display:grid;grid-template-columns:150px 1fr;gap:6px 12px;font-size:14px;margin:10px 0}
+.kv dt{color:var(--mut)}.kv dd{margin:0;white-space:pre-wrap}
+.sigimg{max-height:80px;background:#fdfdf8;border:1px solid var(--line);border-radius:8px;padding:4px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--pri);color:#fff;padding:12px 22px;border-radius:99px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.3);z-index:20}
+[hidden]{display:none!important}
+@media (max-width:520px){.bar{grid-template-columns:100px 1fr 26px}.kv{grid-template-columns:1fr}}
+@media (max-width:720px){.side{width:64px;padding:14px 8px}.side nav button span,.brand span{display:none}.side nav button{justify-content:center;padding:12px 0}.brand{justify-content:center;padding-bottom:14px}}
+@media print{header,.side,.noprint{display:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="side">
+<div class="brand"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l2-6 4 12 2-6h6"/></svg><span>Terapia física<br>y rehabilitación</span></div>
+<nav id="nav">
+<button data-t="form" class="on" title="Nueva incidencia"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M12 11v6M9 14h6"/></svg><span>Nueva incidencia</span></button>
+<button data-t="hist" title="Historial"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>Historial</span></button>
+<button data-t="dash" title="Dashboard"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Dashboard</span></button>
+</nav>
+</aside>
+<div class="content">
+<header><div class="hw">
+<h1>Registro de incidencias</h1>
+<p>Servicio de terapia física y rehabilitación · registro, seguimiento y cierre</p>
+</div></header>
+<main>
+
+<section id="form">
+<div class="card"><h2>I. Datos generales</h2>
+<div class="grid">
+<div><label>N.º de incidencia</label><span class="num" id="nextNum">0001</span></div>
+<div><label for="fecha">Fecha del reporte</label><input type="date" id="fecha"></div>
+<div><label for="hora">Hora</label><input type="time" id="hora"></div>
+<div><label for="turno">Turno</label><select id="turno"><option>Mañana</option><option>Tarde</option><option>Noche</option></select></div>
+</div></div>
+
+<div class="card"><h2>II. Tipo de incidencia</h2>
+<div class="chips" id="tipos"></div>
+<input id="otroTxt" placeholder="Especifique otro tipo…" style="margin-top:12px;max-width:420px" hidden>
+</div>
+
+<div class="card"><h2>III. Datos de la atención</h2>
+<div class="grid">
+<div><label for="hc">Código o historia clínica del paciente</label><input id="hc" placeholder="Si corresponde"></div>
+<div><label for="area">Área o ambiente donde ocurrió</label><input id="area" placeholder="Ej.: Gimnasio, cubículo 3"></div>
+<div><label for="rep">Personal que reporta</label><input id="rep"></div>
+</div></div>
+
+<div class="card"><h2>IV. Descripción de la incidencia</h2>
+<label for="desc">¿Qué ocurrió, cuándo y en qué circunstancias?</label><textarea id="desc"></textarea></div>
+
+<div class="card"><h2>V. Acciones inmediatas realizadas</h2>
+<textarea id="acc" aria-label="Acciones inmediatas"></textarea>
+<label style="margin-top:12px">¿Se comunicó al responsable del servicio?</label>
+<div class="chips"><label><input type="radio" name="com" value="Sí" checked><span>Sí</span></label><label><input type="radio" name="com" value="No"><span>No</span></label></div></div>
+
+<div class="card"><h2>VI. Seguimiento</h2>
+<div class="grid">
+<div><label for="prio">Nivel de prioridad</label><select id="prio"><option>Baja</option><option selected>Media</option><option>Alta</option></select></div>
+<div><label for="est">Estado</label><select id="est"><option>Pendiente</option><option>En proceso</option><option>Cerrada</option></select></div>
+<div><label for="resp">Responsable del seguimiento</label><input id="resp"></div>
+<div><label for="cierre">Fecha de cierre</label><input type="date" id="cierre"></div>
+</div>
+<label for="med" style="margin-top:12px">Medida correctiva o preventiva</label><textarea id="med"></textarea></div>
+
+<div class="card"><h2>VII. Responsables</h2>
+<div class="two">
+<div><label>Firma del trabajador que reporta</label><div class="sig" id="sig1"><canvas></canvas><small>Firme aquí con el dedo o el mouse</small></div><button class="btn sec sm" data-clr="1" style="margin-top:8px">Borrar firma</button></div>
+<div><label>Firma del responsable del servicio</label><div class="sig" id="sig2"><canvas></canvas><small>Firme aquí (opcional al registrar)</small></div><button class="btn sec sm" data-clr="2" style="margin-top:8px">Borrar firma</button></div>
+</div></div>
+<div class="row"><button class="btn" id="save">Guardar incidencia</button><button class="btn sec" id="reset">Limpiar formulario</button><span id="err" style="color:var(--red);font-weight:600"></span></div>
+</section>
+
+<section id="hist" hidden>
+<div class="card noprint"><div class="grid">
+<div><label for="q">Buscar</label><input id="q" placeholder="N.º, paciente, área, texto…"></div>
+<div><label for="fe">Estado</label><select id="fe"><option value="">Todos</option><option>Pendiente</option><option>En proceso</option><option>Cerrada</option></select></div>
+<div><label for="fp">Prioridad</label><select id="fp"><option value="">Todas</option><option>Alta</option><option>Media</option><option>Baja</option></select></div>
+</div></div>
+<div class="card"><div class="tw"><table><thead><tr><th>N.º</th><th>Fecha</th><th>Tipo</th><th>Área</th><th>Prioridad</th><th>Estado</th></tr></thead><tbody id="tb"></tbody></table></div><div class="empty" id="emp" hidden>Aún no hay incidencias. Registre la primera en «Nueva incidencia».</div></div>
+</section>
+
+<section id="dash" hidden>
+<div class="row" style="margin-bottom:12px"><label for="per" style="margin:0">Periodo:</label><select id="per" style="width:auto"><option value="0">Todo el historial</option><option value="7">Últimos 7 días</option><option value="30">Últimos 30 días</option></select></div>
+<div class="kpis" id="kpis"></div>
+<div class="two">
+<div class="card"><h2>Incidencias por día (14 días)</h2><div id="trend"></div></div>
+<div class="card"><h2>Estado de las incidencias</h2><div id="donut"></div></div>
+<div class="card"><h2>Por tipo de incidencia</h2><div id="bytipo"></div></div>
+<div class="card"><h2>Por turno y prioridad</h2><div id="byturno"></div></div>
+</div>
+<div class="card"><h2>Alertas: alta prioridad sin cerrar</h2><div id="alerts"></div></div>
+</section>
+</main>
+</div></div>
+
+<dialog id="dlg"></dialog>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const TIPOS=["Incidente durante la atención del paciente","Caída o riesgo de caída","Dolor o reacción inesperada","Falla de equipo de rehabilitación","Problema con citas o programación","Ausencia o retraso del personal","Falta de materiales o insumos","Otro"];
+const KEY="terapia_incidencias_v1";
+let DB={counter:0,items:[]};
+try{const r=localStorage.getItem(KEY);if(r)DB=JSON.parse(r)}catch(e){}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){}}
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const pad=n=>String(n).padStart(4,"0");
+const fmt=d=>d?d.split("-").reverse().join("/"):"—";
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const tagCls=e=>e==="En proceso"?"En":e;
+const today=()=>{const d=new Date();return new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
+
+/* Tabs */
+$$("#nav button").forEach(b=>b.onclick=()=>{$$("#nav button").forEach(x=>x.classList.toggle("on",x===b));["form","hist","dash"].forEach(id=>$("#"+id).hidden=id!==b.dataset.t);if(b.dataset.t==="hist")renderHist();if(b.dataset.t==="dash")renderDash();if(location.hash!=="#"+b.dataset.t)try{}catch(e){}});
+
+/* Tipos */
+$("#tipos").innerHTML=TIPOS.map((t,i)=>`<label><input type="radio" name="tipo" value="${t}"><span>${t}</span></label>`).join("");
+$$("input[name=tipo]").forEach(r=>r.onchange=()=>{$("#otroTxt").hidden=r.value!=="Otro"||!r.checked});
+
+/* Firma */
+const sigs={};
+function initSig(id){
+  const box=$("#"+id),cv=box.querySelector("canvas"),ctx=cv.getContext("2d");
+  const r=window.devicePixelRatio||1,w=cv.clientWidth||400,h=150;cv.width=w*r;cv.height=h*r;ctx.scale(r,r);
+  ctx.lineCap="round";ctx.lineJoin="round";ctx.strokeStyle="#1d3fa8";
+  let draw=false,last=null,ink=false;
+  const pos=e=>{const b=cv.getBoundingClientRect();return{x:e.clientX-b.left,y:e.clientY-b.top,p:e.pressure||.5}};
+  cv.addEventListener("pointerdown",e=>{draw=true;last=pos(e);cv.setPointerCapture(e.pointerId);ctx.beginPath();ctx.arc(last.x,last.y,1,0,7);ctx.fillStyle="#1d3fa8";ctx.fill();ink=true;box.classList.add("done")});
+  cv.addEventListener("pointermove",e=>{if(!draw)return;const p=pos(e);const mx=(last.x+p.x)/2,my=(last.y+p.y)/2;
+    ctx.lineWidth=1.4+(p.p)*1.6;ctx.beginPath();ctx.moveTo(last.x,last.y);ctx.quadraticCurveTo(last.x,last.y,mx,my);ctx.lineTo(p.x,p.y);ctx.stroke();last=p});
+  ["pointerup","pointerleave","pointercancel"].forEach(ev=>cv.addEventListener(ev,()=>draw=false));
+  sigs[id]={clear(){ctx.clearRect(0,0,w,h);ink=false;box.classList.remove("done")},has:()=>ink,data:()=>cv.toDataURL("image/png")};
+}
+initSig("sig1");initSig("sig2");
+$$("[data-clr]").forEach(b=>b.onclick=()=>sigs["sig"+b.dataset.clr].clear());
+
+/* Formulario */
+function turnoAuto(){const h=new Date().getHours();return h>=6&&h<14?"Mañana":h>=14&&h<20?"Tarde":"Noche"}
+function resetForm(){
+  ["hc","area","rep","desc","acc","med","resp","cierre","otroTxt"].forEach(i=>$("#"+i).value="");
+  $("#fecha").value=today();$("#hora").value=new Date().toTimeString().slice(0,5);$("#turno").value=turnoAuto();
+  $("#prio").value="Media";$("#est").value="Pendiente";$$("input[name=tipo]").forEach(r=>r.checked=false);$("#otroTxt").hidden=true;
+  $$("input[name=com]")[0].checked=true;sigs.sig1.clear();sigs.sig2.clear();$("#err").textContent="";
+  $("#nextNum").textContent=pad(DB.counter+1);
+}
+$("#reset").onclick=resetForm;
+function toast(m){const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>t.hidden=true,3200)}
+$("#save").onclick=()=>{
+  const tipo=($$("input[name=tipo]:checked")[0]||{}).value;const err=$("#err");
+  if(!tipo)return err.textContent="Seleccione el tipo de incidencia.";
+  if(tipo==="Otro"&&!$("#otroTxt").value.trim())return err.textContent="Especifique el otro tipo.";
+  if(!$("#desc").value.trim())return err.textContent="Describa qué ocurrió.";
+  if(!$("#rep").value.trim())return err.textContent="Indique el personal que reporta.";
+  if(!sigs.sig1.has())return err.textContent="Falta la firma del trabajador que reporta.";
+  DB.counter+=1;
+  const it={n:DB.counter,fecha:$("#fecha").value,hora:$("#hora").value,turno:$("#turno").value,tipo,otro:$("#otroTxt").value.trim(),
+    hc:$("#hc").value.trim(),area:$("#area").value.trim(),rep:$("#rep").value.trim(),desc:$("#desc").value.trim(),acc:$("#acc").value.trim(),
+    com:$$("input[name=com]:checked")[0].value,prio:$("#prio").value,est:$("#est").value,med:$("#med").value.trim(),resp:$("#resp").value.trim(),
+    cierre:$("#cierre").value,firma1:sigs.sig1.data(),firma2:sigs.sig2.has()?sigs.sig2.data():""};
+  if(it.est==="Cerrada"&&!it.cierre)it.cierre=today();
+  DB.items.unshift(it);persist();toast("Incidencia N.º "+pad(it.n)+" guardada");resetForm();
+};
+
+/* Historial */
+const tipoLbl=i=>i.tipo==="Otro"&&i.otro?"Otro: "+i.otro:i.tipo;
+function renderHist(){
+  const q=$("#q").value.toLowerCase(),fe=$("#fe").value,fp=$("#fp").value;
+  const L=DB.items.filter(i=>(!fe||i.est===fe)&&(!fp||i.prio===fp)&&(!q||(pad(i.n)+" "+i.hc+" "+i.area+" "+i.desc+" "+i.rep+" "+tipoLbl(i)).toLowerCase().includes(q)));
+  $("#tb").innerHTML=L.map(i=>`<tr class="rw" data-n="${i.n}"><td><b>${pad(i.n)}</b></td><td>${fmt(i.fecha)}<br><small>${i.hora||""}</small></td><td>${esc(tipoLbl(i))}</td><td>${esc(i.area)||"—"}</td><td><span class="tag t-${i.prio}">${i.prio}</span></td><td><span class="tag t-${tagCls(i.est)}">${i.est}</span></td></tr>`).join("");
+  $("#emp").hidden=L.length>0;
+  $$("#tb tr").forEach(r=>r.onclick=()=>openDlg(+r.dataset.n));
+}
+["q","fe","fp"].forEach(i=>$("#"+i).oninput=renderHist);
+function openDlg(n){
+  const i=DB.items.find(x=>x.n===n);if(!i)return;const d=$("#dlg");
+  const kv=(k,v)=>`<dt>${k}</dt><dd>${esc(v)||"—"}</dd>`;
+  d.innerHTML=`<div class="row" style="justify-content:space-between"><h2>Incidencia N.º ${pad(i.n)}</h2><span><span class="tag t-${i.prio}">${i.prio}</span> <span class="tag t-${tagCls(i.est)}">${i.est}</span></span></div>
+  <dl class="kv">${kv("Fecha y hora",fmt(i.fecha)+" · "+i.hora+" · Turno "+i.turno)}${kv("Tipo",tipoLbl(i))}${kv("Paciente (HC)",i.hc)}${kv("Área",i.area)}${kv("Reporta",i.rep)}${kv("Descripción",i.desc)}${kv("Acciones inmediatas",i.acc)}${kv("Se comunicó al responsable",i.com)}${kv("Medida correctiva",i.med)}${kv("Responsable seguimiento",i.resp)}${kv("Fecha de cierre",fmt(i.cierre))}</dl>
+  <div class="two"><div><label>Firma del trabajador</label><img class="sigimg" src="${i.firma1}" alt="Firma del trabajador"></div><div><label>Firma del responsable</label>${i.firma2?`<img class="sigimg" src="${i.firma2}" alt="Firma del responsable">`:"<div class='empty' style='padding:10px'>Sin firma</div>"}</div></div>
+  <div class="row" style="margin-top:16px;justify-content:space-between"><div class="row"><select id="chE" style="width:auto"><option>Pendiente</option><option>En proceso</option><option>Cerrada</option></select><button class="btn sm" id="chB">Actualizar estado</button></div><div class="row"><button class="btn sec sm" id="prB">Imprimir</button><button class="btn dng sm" id="delB">Eliminar</button><button class="btn sec sm" id="clB">Cerrar</button></div></div>`;
+  $("#chE").value=i.est;
+  $("#chB").onclick=()=>{i.est=$("#chE").value;if(i.est==="Cerrada"&&!i.cierre)i.cierre=today();if(i.est!=="Cerrada")i.cierre="";persist();d.close();renderHist();toast("Estado actualizado")};
+  $("#delB").onclick=()=>{if($("#delB").dataset.s){DB.items=DB.items.filter(x=>x.n!==n);persist();d.close();renderHist();toast("Incidencia eliminada")}else{$("#delB").dataset.s=1;$("#delB").textContent="Confirmar eliminación"}};
+  $("#clB").onclick=()=>d.close();$("#prB").onclick=()=>{try{window.print()}catch(e){}};
+  d.showModal();
+}
+
+/* Dashboard */
+function renderDash(){
+  const days=+$("#per").value;let L=DB.items;
+  if(days){const lim=new Date();lim.setDate(lim.getDate()-days);const ls=new Date(lim-lim.getTimezoneOffset()*6e4).toISOString().slice(0,10);L=L.filter(i=>i.fecha>=ls)}
+  const c=f=>L.filter(f).length,tot=L.length,abierta=L.filter(i=>i.est!=="Cerrada").length;
+  const cerr=c(i=>i.est==="Cerrada"),tasa=tot?Math.round(cerr/tot*100):0;
+  const prom=(()=>{const x=L.filter(i=>i.est==="Cerrada"&&i.cierre&&i.fecha);if(!x.length)return"—";return (x.reduce((a,i)=>a+Math.max(0,(new Date(i.cierre)-new Date(i.fecha))/864e5),0)/x.length).toFixed(1)+" d"})();
+  const K=[["Total",tot,"var(--pri)"],["Pendientes",c(i=>i.est==="Pendiente"),"var(--red)"],["En proceso",c(i=>i.est==="En proceso"),"var(--blue)"],["Cerradas",cerr,"var(--grn)"],["Alta prioridad abiertas",c(i=>i.prio==="Alta"&&i.est!=="Cerrada"),"var(--red)"],["Tasa de cierre",tasa+"%","var(--grn)"],["Días promedio a cierre",prom,"var(--amb)"]];
+  $("#kpis").innerHTML=K.map(k=>`<div class="kpi" style="--c:${k[2]}"><b>${k[1]}</b><span>${k[0]}</span></div>`).join("");
+  /* tendencia */
+  const D=[];for(let k=13;k>=0;k--){const d=new Date();d.setDate(d.getDate()-k);D.push(new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10))}
+  const v=D.map(d=>DB.items.filter(i=>i.fecha===d).length),mx=Math.max(3,...v),W=460,H=170,px=i=>30+i*(W-45)/13,py=y=>H-24-y*(H-44)/mx;
+  const pts=v.map((y,i)=>px(i)+","+py(y)).join(" ");
+  $("#trend").innerHTML=`<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Tendencia de incidencias por día"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#14b8a6" stop-opacity=".45"/><stop offset="1" stop-color="#14b8a6" stop-opacity="0"/></linearGradient></defs>
+  ${[0,1,2,3].map(t=>{const y=py(mx*t/3);return `<line x1="30" x2="${W-15}" y1="${y}" y2="${y}" stroke="var(--line)"/><text x="24" y="${y+4}" font-size="10" fill="var(--mut)" text-anchor="end">${Math.round(mx*t/3)}</text>`}).join("")}
+  <polygon points="${px(0)},${py(0)} ${pts} ${px(13)},${py(0)}" fill="url(#g)"/><polyline points="${pts}" fill="none" stroke="var(--pri2)" stroke-width="2.5" stroke-linejoin="round"/>
+  ${v.map((y,i)=>`<circle cx="${px(i)}" cy="${py(y)}" r="3.5" fill="var(--pri)"><title>${fmt(D[i])}: ${y}</title></circle>`).join("")}
+  ${[0,6,13].map(i=>`<text x="${px(i)}" y="${H-6}" font-size="10" fill="var(--mut)" text-anchor="middle">${D[i].slice(8)}/${D[i].slice(5,7)}</text>`).join("")}</svg>`;
+  /* dona */
+  const S=[["Pendiente",c(i=>i.est==="Pendiente"),"#e0662a"],["En proceso",c(i=>i.est==="En proceso"),"#3b62e0"],["Cerrada",cerr,"#22a45d"]];
+  let a=-Math.PI/2,R=62,C=2*Math.PI*R,off=0;
+  const arcs=tot?S.map(s=>{const len=s[1]/tot*C,e=`<circle r="${R}" cx="90" cy="90" fill="none" stroke="${s[2]}" stroke-width="26" stroke-dasharray="${len} ${C-len}" stroke-dashoffset="${-off}" transform="rotate(-90 90 90)"/>`;off+=len;return e}).join(""):`<circle r="${R}" cx="90" cy="90" fill="none" stroke="var(--line)" stroke-width="26"/>`;
+  $("#donut").innerHTML=`<div class="row" style="justify-content:center;gap:24px"><svg viewBox="0 0 180 180" width="170" role="img" aria-label="Distribución por estado">${arcs}<text x="90" y="88" text-anchor="middle" font-size="30" font-weight="700" fill="var(--ink)" font-family="Georgia,serif">${tot}</text><text x="90" y="106" text-anchor="middle" font-size="11" fill="var(--mut)">incidencias</text></svg><div>${S.map(s=>`<div style="margin:6px 0"><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:${s[2]};margin-right:8px"></span>${s[0]}: <b>${s[1]}</b></div>`).join("")}</div></div>`;
+  /* tipo */
+  const bt=TIPOS.map(t=>[t,L.filter(i=>i.tipo===t).length]).sort((x,y)=>y[1]-x[1]),m1=Math.max(1,...bt.map(x=>x[1]));
+  $("#bytipo").innerHTML=bt.map(x=>`<div class="bar"><span>${x[0]}</span><div><i style="width:${x[1]/m1*100}%"></i></div><b>${x[1]}</b></div>`).join("");
+  /* turno */
+  const TU=["Mañana","Tarde","Noche"],m2=Math.max(1,...TU.map(t=>L.filter(i=>i.turno===t).length));
+  $("#byturno").innerHTML=TU.map(t=>{const x=L.filter(i=>i.turno===t),n=x.length;const seg=["Alta","Media","Baja"].map((p,k)=>{const q=x.filter(i=>i.prio===p).length;return q?`<i style="display:inline-block;height:14px;width:${q/m2*100}%;background:${["#e0662a","#e8b23a","#22a45d"][k]}" title="${p}: ${q}"></i>`:""}).join("");return `<div class="bar" style="grid-template-columns:70px 1fr 30px"><span>${t}</span><div style="display:flex;border-radius:6px;overflow:hidden;height:14px">${seg}</div><b>${n}</b></div>`}).join("")+`<div style="font-size:12px;color:var(--mut);margin-top:10px">Colores: <b style="color:#e0662a">alta</b> · <b style="color:#b7791f">media</b> · <b style="color:#22a45d">baja</b></div>`;
+  /* alertas */
+  const AL=L.filter(i=>i.prio==="Alta"&&i.est!=="Cerrada");
+  $("#alerts").innerHTML=AL.length?AL.map(i=>`<div class="row" style="padding:8px 0;border-bottom:1px solid var(--line);justify-content:space-between"><span><b>N.º ${pad(i.n)}</b> · ${esc(tipoLbl(i))} · ${fmt(i.fecha)}</span><span class="tag t-${tagCls(i.est)}">${i.est}</span></div>`).join(""):`<div class="empty" style="padding:14px">Sin alertas. No hay incidencias de alta prioridad abiertas.</div>`;
+}
+$("#per").onchange=renderDash;
+resetForm();
+</script>
+</body>
+</html>
